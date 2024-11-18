@@ -131,6 +131,8 @@ tc_anop_update(const struct vlc_gl_interop *interop, uint32_t textures[],
         if (SurfaceTexture_attachToGLContext(texture, textures[0]) != 0)
             goto error;
 
+	// INSERT HERE
+
         priv->stex_attached = true;
         priv->previous_texture = texture;
     }
