@@ -670,6 +670,8 @@ void matroska_segment_c::ParseTrackEntry( const KaxTrackEntry *m )
             case 10: case 12:
                 debug( vars, " unsupported Stereo Mode=%u", static_cast<uint8_t>( stereo ) ) ;
             }
+
+	    vars.tk->fmt.video.multiview_mode = MULTIVIEW_2D; // CHRISE DISABLE PROJECTION FOR VR APP
             debug( vars, "Track Video Stereo Mode=%u", static_cast<uint8_t>( stereo ) ) ;
         }
         E_CASE( KaxVideoPixelWidth, vwidth )
