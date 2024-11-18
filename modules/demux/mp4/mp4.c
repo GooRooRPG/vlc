@@ -3277,7 +3277,10 @@ static int TrackCreateES( demux_t *p_demux, mp4_track_t *p_track,
                 case VLC_CODEC_MP2:
                 case VLC_CODEC_MPGA:
                 {
-                    const unsigned i_rate = p_fmt->audio.i_rate ? p_fmt->audio.i_rate : p_track->i_timescale;
+                   // CHRISE  
+  		    //const unsigned i_rate = p_fmt->audio.i_rate ? p_fmt->audio.i_rate : p_track->i_timescale;
+  		    const unsigned i_rate = p_fmt->audio.i_rate;
+
                     const MP4_Box_t *p_elst = p_track->p_elst;
                     if( p_elst && BOXDATA(p_elst)->i_entry_count &&
                         BOXDATA(p_elst)->entries[0].i_media_time < 0 )
