@@ -3248,6 +3248,8 @@ static int TrackCreateES( demux_t *p_demux, mp4_track_t *p_track,
                 }
             }
 
+// CHRISE
+/*
             if( p_sys->qt.f_replay_gain_peak > 0 )
             {
                 audio_replay_gain_t *p_arg = &p_fmt->audio_replay_gain;
@@ -3270,7 +3272,7 @@ static int TrackCreateES( demux_t *p_demux, mp4_track_t *p_track,
 
             switch( p_fmt->i_codec )
             {
-                /* When not specified, set max standard decoder delay */
+                // When not specified, set max standard decoder delay 
                 case VLC_CODEC_MP4A:
                 case VLC_CODEC_OPUS:
                 case VLC_CODEC_MP3:
@@ -3295,26 +3297,23 @@ static int TrackCreateES( demux_t *p_demux, mp4_track_t *p_track,
                                     vlc_tick_from_samples( p_sys->qt.i_delay_samples, i_rate ),
                                     p_track->i_timescale );
                     }
-                    /* AAC historical Apple decoder delay 2112 > 2048 */
+                    // AAC historical Apple decoder delay 2112 > 2048 
                     else if( p_fmt->i_codec == VLC_CODEC_MP4A )
                     {
                         p_track->i_decoder_delay =  MP4_rescale_qtime(
                                     vlc_tick_from_samples( 2112, i_rate ),
                                     p_track->i_timescale );
                     }
-                    /* Opus has an expected 80ms discard on seek */
+                    // Opus has an expected 80ms discard on seek 
                     else if( p_fmt->i_codec == VLC_CODEC_OPUS )
                     {
                         p_track->i_decoder_delay =  MP4_rescale_qtime(
                                     vlc_tick_from_samples( 80 * 48, 48000 ),
                                     p_track->i_timescale );
                     }
-                    /* MPEG have One frame delay */
+                    // MPEG have One frame delay 
                     else if( p_fmt->i_codec == VLC_CODEC_MP3 )
                     {
-                        /* https://lame.sourceforge.io/tech-FAQ.txt
-                         * https://www.compuphase.com/mp3/mp3loops.htm
-                           https://www.iis.fraunhofer.de/content/dam/iis/de/doc/ame/conference/AES-116-Convention_guideline-to-audio-codec-delay_AES116.pdf */
                         p_track->i_decoder_delay =  MP4_rescale_qtime(
                                     vlc_tick_from_samples( 576, i_rate ),
                                     p_track->i_timescale );
@@ -3331,6 +3330,7 @@ static int TrackCreateES( demux_t *p_demux, mp4_track_t *p_track,
                 default:
                     break;
             }
+*/
             break;
         default:
             break;
@@ -3525,12 +3525,29 @@ static int TrackTimeToSampleChunk( demux_t *p_demux, mp4_track_t *p_track,
 
 
     /* *** Try to find nearest sync points *** */
-    uint32_t i_sync_sample = i_sample;
+    uint32_t i_sync_sample; // CHRISE = i_sample;
     if( VLC_SUCCESS ==
         TrackGetNearestSeekPoint( p_demux, p_track, i_sample, &i_sync_sample ) )
     {
         msg_Dbg(p_demux,"track[Id 0x%x] sync point found sample %"PRIu32"(-%"PRIu32")",
                 p_track->i_track_ID, i_sync_sample, i_sample - i_sync_sample);
+
+        /* Go to chunk */
+        if( i_sync_sample <= i_sample )
+        {
+            while( i_chunk > 0 &&
+                   i_sync_sample < p_track->chunk[i_chunk].i_sample_first )
+                i_chunk--;
+        }
+        else
+        {
+            while( i_chunk < p_track->i_chunk_count - 1 &&
+                   i_sync_sample >= p_track->chunk[i_chunk].i_sample_first +
+                                    p_track->chunk[i_chunk].i_sample_count )
+                i_chunk++;
+        }
+        i_sample = i_sync_sample;
+
     }
     else
     {
@@ -3575,7 +3592,7 @@ static int TrackTimeToSampleChunk( demux_t *p_demux, mp4_track_t *p_track,
     }
 
     /* Go to sync point chunk */
-    if( i_sync_sample <= i_sample )
+/*    if( i_sync_sample <= i_sample )
     {
         while( i_chunk > 0 &&
                i_sync_sample < p_track->chunk[i_chunk].i_sample_first )
@@ -3588,9 +3605,10 @@ static int TrackTimeToSampleChunk( demux_t *p_demux, mp4_track_t *p_track,
                                 p_track->chunk[i_chunk].i_sample_count )
             i_chunk++;
     }
-
+*/
     *pi_chunk  = i_chunk;
-    *pi_sample = i_sync_sample;
+    *pi_sample = i_sample;
+//    *pi_sample = i_sync_sample;
 
     return VLC_SUCCESS;
 }
