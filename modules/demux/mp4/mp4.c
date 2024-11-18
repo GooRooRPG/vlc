@@ -3538,6 +3538,11 @@ static int TrackTimeToSampleChunk( demux_t *p_demux, mp4_track_t *p_track,
         {
             msg_Dbg(p_demux, "track[Id 0x%x] preroll offset: %"PRId16" samples",
                     p_track->i_track_ID, p_entrydesc->roll.i_roll_distance );
+
+	// CHRISE FIX
+            if( p_entrydesc->roll.i_roll_distance < 0 )
+                i_sync_sample += p_entrydesc->roll.i_roll_distance;
+/*
             if( p_entrydesc->roll.i_roll_distance < 0 )
             {
                 if( i_sync_sample > (uint32_t)-p_entrydesc->roll.i_roll_distance )
@@ -3545,6 +3550,7 @@ static int TrackTimeToSampleChunk( demux_t *p_demux, mp4_track_t *p_track,
                 else
                     i_sync_sample = 0;
             }
+*/
         }
         else if( p_track->i_decoder_delay > 0 &&
                  p_track->i_decoder_delay <= i_start )
