@@ -31,6 +31,8 @@
 # include "config.h"
 #endif
 
+#define METAQUEST
+
 #include "renderer.h"
 
 #include <assert.h>
@@ -802,8 +804,15 @@ vlc_gl_renderer_Open(struct vlc_gl_filter *filter,
 
     const opengl_vtable_t *vt = &filter->api->vt;
 
+#ifdef METAQUEST
+    // Fix for Meta Quest color conversion
     struct vlc_gl_sampler *sampler =
-        vlc_gl_sampler_New(filter->gl, filter->api, glfmt, false);
+        vlc_gl_sampler_New(filter->gl, filter->api, glfmt, true);  
+#else
+    struct vlc_gl_sampler *sampler =
+        vlc_gl_sampler_New(filter->gl, filter->api, glfmt, false);  
+#endif
+
     if (!sampler)
         return VLC_EGENERIC;
 
