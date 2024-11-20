@@ -803,7 +803,7 @@ vlc_gl_renderer_Open(struct vlc_gl_filter *filter,
     const opengl_vtable_t *vt = &filter->api->vt;
 
     struct vlc_gl_sampler *sampler =
-        vlc_gl_sampler_New(filter->gl, filter->api, glfmt, false);
+        vlc_gl_sampler_New(filter->gl, filter->api, glfmt, true);  // TRUE for Movie Deck VR APP
     if (!sampler)
         return VLC_EGENERIC;
 
