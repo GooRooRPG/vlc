@@ -3521,8 +3521,36 @@ static int TrackTimeToSampleChunk( demux_t *p_demux, mp4_track_t *p_track,
     }
 
 
+
     /* *** Try to find nearest sync points *** */
     uint32_t i_sync_sample = i_sample;
+
+    if( VLC_SUCCESS ==
+        TrackGetNearestSeekPoint( p_demux, p_track, i_sample, &i_sync_sample ) )
+    {
+        /* Go to chunk */
+        if( i_sync_sample <= i_sample )
+        {
+            while( i_chunk > 0 &&
+                   i_sync_sample < p_track->chunk[i_chunk].i_sample_first )
+                i_chunk--;
+        }
+        else
+        {
+            while( i_chunk < p_track->i_chunk_count - 1 &&
+                   i_sync_sample >= p_track->chunk[i_chunk].i_sample_first +
+                                    p_track->chunk[i_chunk].i_sample_count )
+                i_chunk++;
+        }
+        i_sample = i_sync_sample;
+    }
+
+    *pi_chunk  = i_chunk;
+    *pi_sample = i_sample;
+
+
+
+/*
     if( VLC_SUCCESS ==
         TrackGetNearestSeekPoint( p_demux, p_track, i_sample, &i_sync_sample ) )
     {
@@ -3564,8 +3592,10 @@ static int TrackTimeToSampleChunk( demux_t *p_demux, mp4_track_t *p_track,
             }
         }
     }
+*/
 
     /* Go to sync point chunk */
+/*
     if( i_sync_sample <= i_sample )
     {
         while( i_chunk > 0 &&
@@ -3582,6 +3612,7 @@ static int TrackTimeToSampleChunk( demux_t *p_demux, mp4_track_t *p_track,
 
     *pi_chunk  = i_chunk;
     *pi_sample = i_sync_sample;
+*/
 
     return VLC_SUCCESS;
 }
