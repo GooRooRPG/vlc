@@ -338,8 +338,12 @@ int SetupVideoES( demux_t *p_demux, const mp4_track_t *p_track, const MP4_Box_t 
         video_format_TransformBy(&p_fmt->video, transform);
     }
 
+    // Movie Deck VR FIX
     /* Set 360 video mode */
     p_fmt->video.projection_mode = PROJECTION_MODE_RECTANGULAR;
+    p_fmt->video.multiview_mode = MULTIVIEW_2D;
+
+/*
     const MP4_Box_t *p_uuid = MP4_BoxGet( p_track->p_track, "uuid" );
     for( ; p_uuid; p_uuid = p_uuid->p_next)
     {
@@ -362,7 +366,8 @@ int SetupVideoES( demux_t *p_demux, const mp4_track_t *p_track, const MP4_Box_t 
             }
         }
     }
-
+*/
+/*
     const MP4_Box_t *p_st3d = MP4_BoxGet( p_sample, "st3d" );
     if (p_st3d && BOXDATA(p_st3d))
     {
@@ -413,6 +418,7 @@ int SetupVideoES( demux_t *p_demux, const mp4_track_t *p_track, const MP4_Box_t 
         p_fmt->video.projection_mode = PROJECTION_MODE_EQUIRECTANGULAR;
     else if (p_cbmp && BOXDATA(p_cbmp))
         p_fmt->video.projection_mode = PROJECTION_MODE_CUBEMAP_LAYOUT_STANDARD;
+*/
 
     /* It's a little ugly but .. there are special cases */
     switch( i_sample_type )
